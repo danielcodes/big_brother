@@ -20,7 +20,7 @@ networks, to vulnerable young people?
 	1. Understanding and defining violent extremism  
 	2. A day in the life of a "target"  
 		A target can be of any gender, age, religion and in any location. In this respect, it becomes essential to understand the lives of dofferent target groups. We have covered a few below:  
-			* Children and adolescents: Probably, the most vulnerable group, spends an average of 7.5 hours a day on various entertainment media <sup>1</sup>.
+			* Children and adolescents: Probably, the most vulnerable group, spends an average of 7.5 hours a day on various entertainment media[1].
 	3. Identifying apportunities to identify targets  
 	4. Developing addressal mechanisms for intervention  
 	5. Creating and pushing content online  
