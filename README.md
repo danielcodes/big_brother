@@ -33,3 +33,9 @@ networks, to vulnerable young people?
 5. #### Assessing tool efficacy  
 6. #### Savvy monitoring  
 7. #### Conveying dangers to vulnerable young people  
+  
+  
+### Data Prevention Cycle ###### (Thank you Hoa!)  
+	1. Data Collection
+	2. Intervention
+	3. Evaluation
