@@ -1,8 +1,10 @@
 
 $(document).ready(function() {
   $('.tooltiper').tooltipster({
-    content: 'loading',
+    content: $('#d3_stuff'),
+    //content: 'hi',
     // 'instance' is basically the tooltip. More details in the "Object-oriented Tooltipster" section.
+    /*
     functionBefore: function(instance, helper) {
 
         var $origin = $(helper.origin);
@@ -24,11 +26,13 @@ $(document).ready(function() {
             });
         }
     },
+    */
+
     contentCloning: true
   });
 
-    //content: $('#tooltip_content'),
-    //contentCloning: true
+  //content: $('#tooltip_content'),
+  //contentCloning: true
 
   $('#test').on('click', function(){
     $.get('/get_data')
@@ -36,6 +40,10 @@ $(document).ready(function() {
         console.log(data) 
       })
   });
+
+  $('.ip_address').on('click', function(){
+    $('#d3_stuff').css({'display': 'inline'})
+  })
 
   // hover over an IP address
   // return the activity data

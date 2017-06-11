@@ -11,6 +11,26 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/jquery.tooltipster/4.2.5/css/tooltipster.bundle.min.css" />
     <link href="/static/css/main.css" rel="stylesheet"/>
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+</style>
+
   </head>
 
   <body>
@@ -27,7 +47,9 @@
             </div>
         </div>
 
-        <button id="test">press </button> 
+        <marquee bgcolor='red'><font color="yellow"><b>Alert! Malicious activity (Level 4) captured in Chelsea. Requires Moderation. Click here</b></font></marquee>
+
+        <div id="d3_stuff"></div>
 
         <table class="table">
           <thead class="thead-inverse">
@@ -37,9 +59,13 @@
               <th>Source URL</th>
               <th>Current URL</th>
               <th>Polarity</th>
-              <th>Lattitude</th>
+              <th>Latitude</th>
               <th>Longitude</th>
               <th>Timestamp</th>
+              <th>Website prior</th>
+              <th>IP prior</th>
+              <th>Total score</th>
+
             </tr>
           </thead>
 
@@ -49,14 +75,17 @@
               {% for row in activity %}
               <tr>
                 <th scope="row">{{outer_loop.index}}</th>
-                <td class="tooltiper" data-tooltip-content="#tooltip_content">{{ip}}</td>
-
+                <td class="tooltiper ip_address" data-tooltip-content="#tooltip_content">{{ip}}</td>
                 <td>{{row.source_url}}</td>
                 <td>{{row.current_url}}</td>
                 <td>{{row.polarity}}</td>
                 <td>{{row.latitude}}</td>
                 <td>{{row.longitude}}</td>
                 <td>{{row.time}}</td>
+                <td>{{row.website_prior}}</td>
+                <td>{{row.ip_prior}}</td>
+                <td>{{row.total_score}}</td>
+
               </tr>
               {% endfor %}
             {% endfor %}
@@ -65,9 +94,9 @@
         </table>
 
         <div class="tooltip_templates">
-            <span id="tooltip_content">
-                <img style="width:100px; height:100px;" src="https://lh3.ggpht.com/EaoEf2uSk3CFAhPw9Fk-mbkU7c_qdBMlF5myx1ocDx4cHw54G21wDokRZSySJ3pd4iw=w300" /> <strong>This is the content of my tooltip!</strong>
-            </span>
+            <div id="tooltip_content">
+                <!--<img style="width:100px; height:100px;" src="https://lh3.ggpht.com/EaoEf2uSk3CFAhPw9Fk-mbkU7c_qdBMlF5myx1ocDx4cHw54G21wDokRZSySJ3pd4iw=w300" /> <strong>This is the content of my tooltip!</strong>-->
+            </div>
         </div>
 
     <!--container-->
@@ -79,6 +108,76 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.tooltipster/4.2.5/js/tooltipster.bundle.min.js"></script>
     <script src="/static/js/main.js"></script>
+
+  <!-- load the d3.js library -->    
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+
+  <script>
+
+  // Set the dimensions of the canvas / graph
+  var margin = {top: 30, right: 20, bottom: 30, left: 50},
+      width = 600 - margin.left - margin.right,
+      height = 270 - margin.top - margin.bottom;
+
+  // Parse the date / time
+  var parseDate = d3.time.format("%d-%b-%y").parse;
+
+  // Set the ranges
+  var x = d3.time.scale().range([0, width]);
+  var y = d3.scale.linear().range([height, 0]);
+
+  // Define the axes
+  var xAxis = d3.svg.axis().scale(x)
+      .orient("bottom").ticks(5);
+
+  var yAxis = d3.svg.axis().scale(y)
+      .orient("left").ticks(5);
+
+  // Define the line
+  var valueline = d3.svg.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.close); });
+      
+  // Adds the svg canvas
+  var svg = d3.select("#d3_stuff")
+      .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+          .attr("transform", 
+                "translate(" + margin.left + "," + margin.top + ")");
+
+  // Get the data
+  d3.json("/get_data", function(error, data, ) {
+      console.log(data)
+      data = data['192.192.192.192'];
+      data.forEach(function(d) {
+        d.date = Date.parse(d.date);
+        d.close = +d.total_score;
+        console.log(d.close)
+      });
+
+      // Scale the range of the data
+      x.domain(d3.extent(data, function(d) { return d.date; }));
+      y.domain([0, d3.max(data, function(d) { return d.close; })]);
+
+      // Add the valueline path.
+      svg.append("path")
+          .attr("class", "line")
+          .attr("d", valueline(data));
+
+      // Add the X Axis
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      // Add the Y Axis
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis);
+  });
+  </script>
 
   </body>
 </html>
