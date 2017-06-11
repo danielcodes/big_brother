@@ -7,7 +7,7 @@ data = []
 ip_addresses = {}
 
 # pass data to template
-with open('data/janak_data.csv', 'rU') as f:
+with open('data/updated_data.csv', 'rU') as f:
     reader = csv.reader(f)
     header = reader.next()
     # print header
