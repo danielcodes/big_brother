@@ -28,6 +28,8 @@
             </div>
         </div>
 
+        <button id="test">press </button> 
+
         <table class="table">
           <thead class="thead-inverse">
             <tr>
@@ -40,22 +42,26 @@
               <th>Timestamp</th>
             </tr>
           </thead>
+
           <tbody>
-            {% for item in data %}
+            {% for ip, activity in ip_addresses.items() %}
+              {% set outer_loop = loop %}
+              {% for row in activity %}
               <tr>
-                <th scope="row">{{loop.index}}</th>
-                <td >{{item.ip_address}}</td>
-                <td>{{item.source_url}}</td>
-                <td>{{item.current_url}}</td>
-                <td>{{item.latitude}}</td>
-                <td>{{item.longitude}}</td>
-                <td>{{item.time}}</td>
+                <th scope="row">{{outer_loop.index}}</th>
+                <td class="tooltiper" data-tooltip-content="#tooltip_content">{{ip}}</td>
+
+                <td>{{row.source_url}}</td>
+                <td>{{row.current_url}}</td>
+                <td>{{row.latitude}}</td>
+                <td>{{row.longitude}}</td>
+                <td>{{row.time}}</td>
               </tr>
+              {% endfor %}
             {% endfor %}
           </tbody>
-        </table>
 
-        <span class="tooltiper" data-tooltip-content="#tooltip_content">This span has a tooltip with HTML when you hover over it!</span>
+        </table>
 
         <div class="tooltip_templates">
             <span id="tooltip_content">
